@@ -3,37 +3,94 @@
 //create sprite class for sprites, whenver theres a sprite object created from sprite class it will execute the constructor
 //a main property in gane dev is position, each spritewill have its own indeopendent position so we
 
-
-class Sprite {
+class Bkgrnd {
   constructor({ position, width, height, imageSrc, scale = 1, frameMax = 1 }) {
     //pass argumentts into constructor
     //pass an argument for 'position' to the sprite class, put it in curly brackets to make it pass as one object to avoid load order error
     this.position = position; //whenever you creat a property within a class in a constructor it should be prefaced by this.
     this.width = width;
     this.height = height;
-    this.image = new Image() //create new html image whenever sprite is created
-    this.image.src = imageSrc
-    this.scale = scale
-    this.frameMax = frameMax
-    this.frameCurrent = 0
+    this.image = new Image(); //create new html image whenever sprite is created
+    this.image.src = imageSrc;
+    this.scale = scale; //scale is gonna be 1 by default and will be varibale within the each new class by setting a value for it
+    this.frameMax = frameMax;
+    this.frameCurrent = 0;
+    this.frameElapsed = 0; //this shows how many frames have we elapsed over through out our aniation( increases as game runs)
+    this.frameHold = 10; //this is how many frames we should got through before changing frames current
   }
 
   draw() {
-      c.drawImage(
-        this.image, //draw image in canvas
-        0,// this.frameCurrent * (this.width/this.framesMax),
-        0,
-        this.width / this.frameMax, //initiate crop to one frame
-        this.height,
-        this.position.x, 
-        this.position.y, 
-        (this.width / this.frameMax) * this.scale, 
-        this.height * this.scale
-        )  //multiply height by scale
+    c.drawImage(
+      this.image, //draw image in canvas
+      this.frameCurrent * (this.image.width / this.frameMax),
+      0, //x-coordinate of image
+      // 0,//y-coordinate/\
+      this.image.width / this.frameMax, //initiate crop width to one frame
+      this.image.height,
+      this.position.x,
+      this.position.y,
+      (this.image.width / this.frameMax) * this.scale,
+      this.image.height * this.scale
+    ); //multiply height by scale
+  }
+
+  update() {
+    // this.frameElapsed++
+
+    // if (this.frameElapsed % this.frameHold === 0) {
+
+    this.draw(); //calling the draw() method
+    //   if(this.frameCurrent < this.frameMax - 1) {
+    //     this.frameCurrent++
+    //   } else {
+    //     this.frameCurrent = 0
+    //   }
+
+    // }
+  }
+}
+class Sprite {
+  constructor({ position, width, height, imageSrc, scale = 1, frameMax = 0 }) {
+    //pass argumentts into constructor
+    //pass an argument for 'position' to the sprite class, put it in curly brackets to make it pass as one object to avoid load order error
+    this.position = position; //whenever you creat a property within a class in a constructor it should be prefaced by this.
+    this.width = width;
+    this.height = height;
+    this.image = new Image(); //create new html image whenever sprite is created
+    this.image.src = imageSrc;
+    this.scale = scale; //scale is gonna be 1 by default and will be varibale within the each new class by setting a value for it
+    this.frameMax = frameMax;
+    this.frameCurrent = 0;
+    this.frameElapsed = 0; //this shows how many frames have we elapsed over through out our aniation( increases as game runs)
+    this.frameHold = 5; //this is how many frames we should got through before changing frames current
+  }
+
+  draw() {
+    c.drawImage(
+      this.image, //draw image in canvas
+      this.frameCurrent * (this.image.width / this.frameMax),
+      0, //x-coordinate of image
+      // 0,//y-coordinate/\
+      this.image.width / this.frameMax, //initiate crop width to one frame
+      this.image.height,
+      this.position.x,
+      this.position.y,
+      (this.image.width / this.frameMax) * this.scale,
+      this.image.height * this.scale
+    ); //multiply height by scale
   }
 
   update() {
     this.draw(); //calling the draw() method
+    this.frameElapsed++; //incrementall yincrese frames elapsed over time
+
+    if (this.frameElapsed % this.frameHold === 0) {
+      if (this.frameCurrent < this.frameMax - 1) { //if current is less than max we keep going to next frame
+        this.frameCurrent++;
+      } else {
+        this.frameCurrent = 0; // once current = max, this sets back to 1st frame to loop animation
+      }
+    }
   }
 }
 
@@ -95,7 +152,8 @@ class Fighter {
     // this.velocity.y += 10// overtime position.y is going to have 10 pixels added to it for each frame that is looped over at a rate of 10pixels/second or per loop
     //if stratement to stop sprite falling off the page if its bottom touchesthe lower edge of the page, by seeting velocity to 0
 
-    if (this.position.y + this.height + this.velocity.y >= canvas.height -20) { //added -20 to make fighter stand on ground instead of canvas edge
+    if (this.position.y + this.height + this.velocity.y >= canvas.height - 20) {
+      //added -20 to make fighter stand on ground instead of canvas edge
       // if the lowest point of the rectangle is equals to the canvas edge/height
       this.velocity.y = 0; // rdeuce velocity to 0
     } else this.velocity.y += gravity; //if above isnt true, gravity is applied until bottom edge touches canvas (add acceleration by incrementing gravity value to fall speed and closes gap btwn sprite and canvas floor)

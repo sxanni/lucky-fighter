@@ -15,7 +15,7 @@ c.fillRect(0, 0, canvas.width, canvas.height); //<---set x and y positions to = 
 
 const gravity = 0.4;
 
-const background = new Sprite({//create new sprite object called background that takes in position and image source
+const background = new Bkgrnd({//create new sprite object called background that takes in position and image source
   position: { //specify its position
     x:0,
     y:0
@@ -23,17 +23,19 @@ const background = new Sprite({//create new sprite object called background that
   width: 1024, //specify its width and  height
   height: 576,
   scale:2.7,
+  // frameMax:1,
+  // frameCurrent:1,
   imageSrc: './assets/glacialMount.png' 
 })
 const king = new Sprite({//create new sprite object called background that takes in position and image source
   position: { //specify its position
-    x:350,
-    y:320
+    x:355,
+    y:100
   },
-  width: 2604, //specify its width and  height
+  width: 504, //specify its width and  height
   height: 128,
-  scale: 2.5,
-  frameMax:18, 
+  scale: 2.4,
+  frameMax:18,
   imageSrc: './assets/kingIdle.png'
 })
 
