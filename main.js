@@ -15,29 +15,33 @@ c.fillRect(0, 0, canvas.width, canvas.height); //<---set x and y positions to = 
 
 const gravity = 0.4;
 
-const background = new Bkgrnd({//create new sprite object called background that takes in position and image source
-  position: { //specify its position
-    x:0,
-    y:0
+const background = new Bkgrnd({
+  //create new sprite object called background that takes in position and image source
+  position: {
+    //specify its position
+    x: 0,
+    y: 0,
   },
   width: 1024, //specify its width and  height
   height: 576,
-  scale:2.7,
+  scale: 2.7,
   // frameMax:1,
   // frameCurrent:1,
-  imageSrc: './assets/glacialMount.png' 
-})
-const king = new Sprite({//create new sprite object called background that takes in position and image source
-  position: { //specify its position
-    x:355,
-    y:100
+  imageSrc: "./assets/glacialMount.png",
+});
+const king = new Sprite({
+  //create new sprite object called background that takes in position and image source
+  position: {
+    //specify its position
+    x: 355,
+    y: 100,
   },
   width: 504, //specify its width and  height
   height: 128,
   scale: 2.4,
-  frameMax:18,
-  imageSrc: './assets/kingIdle.png'
-})
+  frameMax: 18,
+  imageSrc: "./assets/kingIdle.png",
+});
 
 const player = new Fighter({
   position: {
@@ -45,6 +49,8 @@ const player = new Fighter({
     x: 0, //x coordinate on canvas
     y: 0, //y coordinate on canvas
   },
+  // width: 304, //specify its width and  height
+  // height: 128,
   velocity: {
     //create new object from sprite class
     x: 0, //x coordinate on canvas
@@ -54,8 +60,43 @@ const player = new Fighter({
     x: 0,
     y: 0,
   },
-
-  color: "blue",
+  imageSrc: "./assets/red/idle.png", //accidentally commenting thia out led to anoying error("Uncaught DOMException: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The HTMLImageElement provided is in the 'broken' state.
+  // at Fighter.draw ")
+  frameMax: 18,
+  scale: 3.1,
+  frameCurrent: 0,
+  // frameHold:3,
+  offset: {
+    x: 50,
+    y: 20
+  },
+  sprites: {
+    idle: {
+      imageSrc: "./assets/red/idle.png",
+      frameMax: 18,
+    },
+    run: {
+      frameMax: 24,
+      imageSrc: "./assets/red/run.png",
+    },
+    jump: {
+      imageSrc: "./assets/red/jump.png",
+      frameMax: 19,
+    },
+    hurt: {
+      imageSrc: "./assets/red/hurt.png",
+      frameMax: 7,
+    },
+    fall: {
+      imageSrc: "./assets/red/hurt.png",
+      frameMax: 7,
+    },
+    attack: {
+      imageSrc: "./assets/red/Light-atk.png",
+      frameMax: 26,
+    },
+  },
+  // color: "blue",
 });
 
 player.draw(); //display / draw player on canvas
@@ -74,10 +115,39 @@ const enemy = new Fighter({
     y: 0, //y coordinate on canvas
   },
   offset: {
-    x: -50,
-    y: 0,
+    x: 0,
+    y: 20,
   },
-  color: "red",
+  imageSrc: "./assets/kenji/Idle.png",
+  frameMax: 4,
+  scale: 2.5,
+  offset: {
+    x:215,
+    y:157
+  },
+  sprites: {
+    idle: {
+      imageSrc: "./assets/kenji/Idle.png",
+      frameMax: 4,
+    },
+    run: {
+      imageSrc: "./assets/kenji/Run.png",
+      frameMax: 8,
+    },
+    jump: {
+      imageSrc: "./assets/kenji/Jump.png",
+      frameMax: 2,
+    },
+    fall: {
+      imageSrc: "./assets/kenji/Fall.png",
+      frameMax: 2,
+    },
+    attack: {
+      imageSrc: "./assets/kenji/Attack1.png",
+      frameMax: 4,
+    },
+  },
+  // color: "red",
 });
 
 enemy.draw(); //display / draw enemy on canvas
@@ -108,17 +178,16 @@ const keys = {
 
 let lastKey; // const used to grab the last key that waas pressed, fixing left and rigt button press bug
 
-
 decreaseTimer();
 
 //create animation loop to simulate gravity constant
-function animate() { 
+function animate() {
   window.requestAnimationFrame(animate); //this call represents whatever function we want to loop
   c.fillStyle = "black";
   c.fillRect(0, 0, canvas.width, canvas.height);
   // c.clearlRect(0, 0, canvas.width, canvas.height)// clears/refreshes canvas to refresh the drawing and avoid object leaving residual/paint like effect(also clears background)
-  background.update()
-  king.update()
+  background.update();
+  king.update();
   player.update();
   enemy.update();
   // console.log('number of loops');<-- to see how many times its looping in chrome dev console
@@ -127,19 +196,51 @@ function animate() {
   enemy.velocity.x = 0;
 
   //if last key is left aro, and left key is pressed, player moves left
+  
   //player movement
   if (keys.ArrowLeft.pressed && player.lastKey === "ArrowLeft") {
-    player.velocity.x = -5;
+    player.velocity.x = -2;
+    player.switchSprite('run'); //set default movement sprite to run
+    // player.frameMax = player.sprite.run.frameMax
+
   } else if (keys.ArrowRight.pressed && player.lastKey === "ArrowRight") {
-    player.velocity.x = 6;
+    player.velocity.x = 2;
+    player.switchSprite('run'); //set default movement sprite to run
+    
+    // player.frameMax = player.sprite.run.frameMax
+  }else {
+  player.switchSprite('idle') //set default movement sprite to idle
+
   }
+   //jumping
+  if(player.velocity.y < 0) {
+    player.switchSprite('jump'); //set default movement sprite to jump
+    // player.frameMax = player.sprite.jump.frameMax
+  } else if (player.velocity.y > 0) {
+    player.switchSprite('fall');
+    console.log('faling')
+  }
+  
 
   //enemy movement
   if (keys.a.pressed && enemy.lastKey === "a") {
-    enemy.velocity.x = -5;
+    enemy.velocity.x = -2;
+    enemy.switchSprite('run');
   } else if (keys.d.pressed && enemy.lastKey === "d") {
-    enemy.velocity.x = 6;
+    enemy.velocity.x = 2;
+    enemy.switchSprite('run');
+  } else {
+    enemy.switchSprite('idle')
   }
+
+    //jumping
+    if(enemy.velocity.y < 0) {
+      enemy.switchSprite('jump'); //set default movement sprite to jump
+      // player.frameMax = player.sprite.jump.frameMax
+    } else if (enemy.velocity.y > 0) {
+      enemy.switchSprite('fall');
+      console.log('faling')
+    }
 
   //detect for collision below
   if (
@@ -172,7 +273,7 @@ function animate() {
 
   //endgame based pn health
   if (enemy.health <= 0 || player.health <= 0) {
-    determineWinner({player, enemy, timerId})
+    determineWinner({ player, enemy, timerId });
   }
 } //the above is an infinite animation loop
 
@@ -196,6 +297,7 @@ window.addEventListener("keydown", (event) => {
       // player.velocity.x = 1 //player velocity is 1 so it moves right
       break;
     case "ArrowUp":
+
       player.velocity.y = -10; //player velocity is -12 so it jumps to -12, before gravity acts to pull it back down
       break;
     case " ":
@@ -225,6 +327,8 @@ window.addEventListener("keydown", (event) => {
 
 //add event for when we release the key/ keyup event
 window.addEventListener("keyup", (event) => {
+  // player.image = player.sprites.jump.image;
+  
   //arrow function as second argument
   switch (
     event.key //switch function to map keydown event to player movement on x axis of canvas

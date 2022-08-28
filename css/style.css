@@ -111,6 +111,17 @@ canvas{
     border: 3px solid rgb(224, 19, 19);
     
 }
+/* .grassContainer{
+    width: 100%;
+
+} */
+.grass{
+    width: 100%;
+    height: 30px;
+    position: absolute;
+    bottom: 0;
+
+}
 
 .endGame{
     font-size: 80px;

@@ -14,10 +14,15 @@
 
 [2] Sprites and animation
     Background sprite---------------------- done
-    shop spprite
-    Sprites with animation
-    Player Sprites
-    Enemy Sprites
+    king/spectator sprite ----------------------- done
+    Sprites with animation---------------------- done
+    Player Sprites ----------------------- done
+        idle - done
+        run - done
+        jump - done
+        attack - done
+        die -
+    Enemy Sprites ---------------------------------- done
 
 
 
